@@ -14,7 +14,7 @@ public class Main {
 		panel.setLayout(new FlowLayout());
 		JLabel label = new JLabel("JFrame Example");
 		JButton button = new JButton();
-		button.setText("HELLO TOM");
+		button.setText("HALLO TOM");
 		panel.add(label);
 		panel.add(button);
 		frame.add(panel);
