@@ -6,7 +6,12 @@ public class GameField {
     private String type;
     private Figure figure;
     private Color color;
+    private int index;
+    
 
+    public int getIndex() {
+        return index;
+    }
     public Color getColor() {
         return color;
     }
@@ -22,8 +27,9 @@ public class GameField {
     public void setType(String type) {
         this.type = type;
     }
-    public GameField(String type,Color color){
+    public GameField(String type,Color color,int index){
         this.type = type;
         this.color = color;
+        this.index = index;
     }
 }
