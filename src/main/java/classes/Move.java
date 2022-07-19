@@ -1,31 +1,29 @@
 package classes;
 
 public class Move {
-    private int playerID;
-    public int getPlayerID() {
-        return playerID;
+    private Player player;
+    public Player getPlayer() {
+        return player;
     }
-    private int figureId;
-    public int getFigureId() {
-        return figureId;
+    private GameField fieldFrom;
+    public GameField getFieldFrom() {
+        return fieldFrom;
     }
-    private int fieldIndexFrom;
-    public int getFieldIndexFrom() {
-        return fieldIndexFrom;
-    }
-    private int fieldIndexTo;
-    public int getFieldIndexTo() {
-        return fieldIndexTo;
+    private GameField fieldTo;
+    public GameField getFieldTo() {
+        return fieldTo;
     }
     private int rolledNumber;
     public int getRolledNumber() {
         return rolledNumber;
     }
-    public Move(int playerID, int figureId,int fieldIndexFrom,int fieldIndexTo,int rolledNumber) {
-        this.playerID = playerID;
-        this.figureId = figureId;
-        this.fieldIndexFrom = fieldIndexFrom;
-        this.fieldIndexTo = fieldIndexTo;
+    public Move(Player player,GameField fieldFrom,GameField fieldTo,int rolledNumber) {
+        this.player = player;
+        this.fieldFrom = fieldFrom;
+        this.fieldTo = fieldTo;
+        this.rolledNumber = rolledNumber;
+    }
+    public Move(int rolledNumber){
         this.rolledNumber = rolledNumber;
     }
 }

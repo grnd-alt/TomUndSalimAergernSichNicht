@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import classes.GameAPI;
+import classes.Move;
 import classes.Player;
 import constants.Constants;
 
@@ -24,18 +25,20 @@ public class Main {
 		frame.add(panel);
 		frame.setSize(200,300);
 		frame.setVisible(true);
-		System.out.println("Hello Tom And Salim");
 
 
 		GameAPI gameAPI = new GameAPI();
-		System.out.println(gameAPI.RollDice(0));
+		for ( int i =0; i<10; i++ ) {
+			Move[] moves = gameAPI.RollDice(0);
+			if (moves[0].getRolledNumber()==6){
+				gameAPI.MakeMove(moves[0]);
+			}
+		}
+
 		Player[] players = new Player[4];
 		for (int i = 0; i < 4;i++) {
 			players[i] = new Player(i,Constants.TEAMCOLORS[i]);
 		}
-		
-		// GameBoard gameBoard = new GameBoard(players);
-		// System.out.println(gameBoard);
 	}
 
 }

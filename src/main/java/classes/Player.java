@@ -5,6 +5,16 @@ import java.awt.Color;;
 public class Player {
     private Figure[] figures;
     private int teamindex;
+    private GameField startField;
+
+    public void setStartField(GameField startField) {
+        this.startField = startField;
+    }
+
+    public GameField getStartField() {
+        return startField;
+    }
+
     public int getTeamindex() {
         return teamindex;
     }
