@@ -13,4 +13,4 @@ Tom will write this!
 Read the comment in GameApi.java to see how to use the Backend
 
 This is how the backend is indexing all fields on the board.
-![IMAGE](https://github.com/grnd-alt/TomUndSalimAergernSichNicht)
+![IMAGE](https://raw.githubusercontent.com/grnd-alt/TomUndSalimAergernSichNicht/master/menschaergerdichnichtIndices.jpeg)
