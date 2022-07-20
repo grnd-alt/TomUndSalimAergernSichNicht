@@ -37,6 +37,5 @@ public class GameBoard {
             }
 
         }
-        System.out.println("HHH");
     }
 }
