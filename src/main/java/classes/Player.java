@@ -4,6 +4,14 @@ import java.awt.Color;;
 
 public class Player {
     private Figure[] figures;
+    public void setFigures(GameBoard gameBoard) {
+        this.figures = new Figure[4];
+        for ( int i = 0; i< 4; i++) {
+            this.figures[i] = new Figure(i,gameBoard.getGameFields()[(teamindex * 4) + i],this);
+            gameBoard.getGameFields()[(this.teamindex * 4) + i].setFigure(this.figures[i]);
+        }
+    }
+
     private int teamindex;
     private GameField startField;
 
@@ -45,9 +53,6 @@ public class Player {
         this.teamcolor = teamcolor;
         this.figures = new Figure[4];
         this.teamindex = teamindex;
-        for ( int i = 0; i< 4; i++) {
-            this.figures[i] = new Figure(i,0,new Color(255,0,0));
-        }
     }
 
     public Figure[] getFigures() {

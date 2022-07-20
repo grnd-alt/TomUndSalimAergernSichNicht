@@ -8,25 +8,34 @@ public class Figure {
         return index;
     }
 
-    private int position;
-    public void setPosition(int position) {
+    private GameField position;
+    public void setPosition(GameField position) {
         this.position = position;
     }
 
-    public int getPosition() {
+    public GameField getPosition() {
         return position;
     }
 
-    public Figure(int index, int position,Color color) {
-        this.index = index;
-        this.position = position;
+    private Player owner;
+    
+
+    public Player getOwner() {
+        return owner;
     }
 
-    public void moveMe(int rolled){
-        this.position += rolled;
+    public Figure(int index, GameField position,Player owner) {
+        this.index = index;
+        this.position = position;
+        this.owner =owner;
     }
 
     public void hitMe() {
-        this.position = 0;
+        for (int i = 0;i<4;i++) {
+            if (this.owner.getHomeFields()[i].getFigure() == null) {
+                this.position = this.owner.getHomeFields()[i];
+                this.owner.getHomeFields()[i].setFigure(this);
+            }
+        }
     }
 }

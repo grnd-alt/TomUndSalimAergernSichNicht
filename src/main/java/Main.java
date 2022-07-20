@@ -1,4 +1,5 @@
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,25 +14,26 @@ import constants.Constants;
 public class Main {
 
 	public static void main(String[] args) {
-		JFrame frame = new JFrame("TESTFrame");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		JLabel label = new JLabel("JFrame Example");
-		JButton button = new JButton();
-		button.setText("HALLO TOM");
-		panel.add(label);
-		panel.add(button);
-		frame.add(panel);
-		frame.setSize(200,300);
-		frame.setVisible(true);
+		// JFrame frame = new JFrame("TESTFrame");
+		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// JPanel panel = new JPanel();
+		// panel.setLayout(new FlowLayout());
+		// JLabel label = new JLabel("JFrame Example");
+		// JButton button = new JButton();
+		// button.setText("HALLO TOM");
+		// panel.add(label);
+		// panel.add(button);
+		// frame.add(panel);
+		// frame.setSize(200,300);
+		// frame.setVisible(true);
 
 
 		GameAPI gameAPI = new GameAPI();
 		for ( int i =0; i<10; i++ ) {
-			Move[] moves = gameAPI.RollDice(0);
-			if (moves[0].getRolledNumber()==6){
-				gameAPI.MakeMove(moves[0]);
+			ArrayList<Move> moves = gameAPI.rollDice(0);
+			if (moves.size()>0) {
+				gameAPI.makeMove(moves.get(0));
+				System.out.println("made move from;to:  " + moves.get(0).getFieldFrom().getIndex() + "; " + moves.get(0).getFieldTo().getIndex());
 			}
 		}
 
