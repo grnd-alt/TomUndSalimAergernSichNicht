@@ -3,13 +3,12 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 import ui.Field;
+import constants.Constants;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
 
-
 public class InitWindow extends JPanel{
 
-    private Color backgroundColor = new Color(253 , 241,141);
     private Color playerGreen = new Color(0,255,0);
     private Color playerRed = new Color(255,0,0);
     private Color playerYellow = new Color(255,255,0);
@@ -47,7 +46,8 @@ public class InitWindow extends JPanel{
                 {2,3,-1,-1,16,55,54,-1,-1,14,15,-2},
 
         };
-
+        FigureUI figure = new FigureUI("RED",panel);
+        panel.add(figure.getComp());
         for(int i = 0;i < field.length; i++){
             int y = i*(720/11)+10;
             for(int j = 0; j < field[i].length; j++){
@@ -69,9 +69,10 @@ public class InitWindow extends JPanel{
                 } else if (field[i][j] == -2) {
                     new Field().initField(panel, Color.CYAN, 3,x,y);
                 } else {
-                    new Field().initField(panel, backgroundColor, 1,x,y);
+                    new Field().initField(panel, Constants.BACKGROUND, 1,x,y);
                 }
             }
         }
+        frame.setSize(1001,825);
     }
 }
