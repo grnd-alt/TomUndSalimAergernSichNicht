@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 public class NextMoves {
     public Player nextPlayer;
+    private int rolled;
+    public int getRolled() {
+        return rolled;
+    }
     public Player getNextPlayer() {
         return nextPlayer;
     }
@@ -23,9 +27,12 @@ public class NextMoves {
     public NextMoves(Move move) {
         this.moves.add(move);
         this.nextPlayer = move.getPlayer();
+        System.out.println(move.getRolledNumber() + "HHHHH");
+        this.rolled = move.getRolledNumber();
     }
-    public NextMoves(Player nextPlayer) {
+    public NextMoves(Player nextPlayer,int rolled) {
         this.nextPlayer = nextPlayer;
+        this.rolled = rolled;
     }
     
 }

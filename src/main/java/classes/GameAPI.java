@@ -3,12 +3,17 @@ package classes;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import constants.Constants;
 import helpers.Dice;
 
 public class GameAPI {
 
     private GameBoard gameBoard;
+    private int trynum = 0;
     private Player onturn;
     public Player getOnturn() {
         return onturn;
@@ -48,7 +53,10 @@ public class GameAPI {
      * @param move The move the Player decided to make
      * @return 
      */
-    public boolean makeMove(Move move) {
+    public static boolean makeMove(Move move) {
+        for (int i = 0; i < 4;i++){
+            move.getFieldFrom().getFigure().getOwner().getFigures()[i].getFigureUI().UnSetBackground();
+        }
         if(move.getFieldFrom().getFigure() != null){
             if(move.getFieldTo().getFigure() == null) {
                 move.getFieldFrom().getFigure().setPosition(move.getFieldTo());
@@ -63,12 +71,6 @@ public class GameAPI {
             }
         }
         return move.getPlayer().hasWon();
-    }
-
-    private boolean inEndZone(Figure figure,int rolled) {
-        int endfieldsbegin = (0+ figure.getOwner().getTeamindex() * 4) % 16 + 56;
-        int endfieldslast = (3+ figure.getOwner().getTeamindex() * 4) % 16 + 56;
-        return false;
     }
 
     private boolean movePossible(Figure figure,int rolled) {
@@ -119,49 +121,24 @@ public class GameAPI {
         return false;
     }
 
-    public NextMoves rollDice(int playerId) {
-        int rolled = Dice.rollDice();
-        Player player = players[playerId];
-        NextMoves nextMoves = new NextMoves(players[(playerId+1)%4]);
 
-
-        for (int figureInd = 0; figureInd < 4; figureInd++) {
-            Figure figure = player.getFigures()[figureInd];
-            if (figure.getPosition().getIndex() >= 16) {
-                // CHECK if Figure has gone one round
-                if(figure.getPosition().getIndex() < player.getStartField().getIndex() && figure.getPosition().getIndex()+rolled >= player.getStartField().getIndex()
-                    || figure.getPosition().getType() == "end"
-                ){
-                    if (rolled -(player.getStartField().getIndex()-figure.getPosition().getIndex()) < 4) {
-                        System.out.println("one way around");
-                        nextMoves.addMove(new Move(player, figure.getPosition(), player.getEndzone()[rolled -(player.getStartField().getIndex()-figure.getPosition().getIndex())], rolled));
-                        System.out.println(player.getEndzone()[rolled -(player.getStartField().getIndex()-figure.getPosition().getIndex())]);
-                    }
-                    continue;
-                }
-                if(figure.getPosition().getIndex() > player.getStartField().getIndex() && (figure.getPosition().getIndex() +rolled) % 50 < player.getStartField().getIndex()&& player.getStartField().getIndex() == 16) {
-                    if (figure.getPosition().getIndex() + rolled <= 59 ) {
-                        nextMoves.addMove(new Move(player, figure.getPosition(), gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled], rolled));
-                    }
-                    continue;
-                }
-
-                // DEFAULT Figures going around in circles
-                nextMoves.addMove(new Move(
-                    player,
-                    gameBoard.getGameFields()[figure.getPosition().getIndex()],
-                    gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled > 55 ? (figure.getPosition().getIndex()+rolled)%55 + 15:figure.getPosition().getIndex()+rolled], 
-                    rolled
-                ));
-            } else {
-                if (rolled == 6) {
-                    nextMoves.addMove(new Move(player, figure.getPosition(), player.getStartField(), rolled));
-                }
+    private boolean NeedsSix(Player player) {
+        for (int i = 0; i < 4;i++) {
+            if (player.getFigures()[i].getPosition().getIndex()>=16 && player.getFigures()[i].getPosition().getIndex() <=55){
+                return false;
             }
         }
 
-        this.onturn = players[(player.getTeamindex()+1) %this.players.length];
-        return nextMoves;
+        boolean seenfigureinendzone = false;
+        for(int i = 0;i<4;i++){
+            if (player.getEndzone()[i].getFigure() != null){
+                if (seenfigureinendzone) {
+                    return false;
+                }
+                seenfigureinendzone = true;
+            }
+        }
+        return true;
     }
 
     /**
@@ -173,48 +150,109 @@ public class GameAPI {
      * @param playerId the player's id who's turn it is
      * @return ArrayList of Moves the player can decide from
      */
-    public NextMoves rollDice2(int playerId){
-        int rolled = Dice.rollDice();
+    public NextMoves rollDice(int playerId,int toroll) {
+        int rolled = toroll > -1?toroll:Dice.rollDice();
         Player player = players[playerId];
-        NextMoves nextMoves = new NextMoves(players[(playerId+1)%4]);
-        if (rolled == 6) {
-            for (int i = 0;i<4;i++){
-                if (player.getHomeFields()[i].getFigure() != null){
-                    if (player.getStartField().getFigure() == null ||
-                        player.getStartField().getFigure().getOwner() != player
-                    ) {
-                        return new NextMoves(new Move(player,player.getHomeFields()[i],player.getStartField(),rolled));
-                    }
-                    // else if(this.gameBoard.getGameFields()[player.getStartField().getIndex()+rolled].getFigure() == null ||
-                    // this.gameBoard.getGameFields()[player.getStartField().getIndex()+rolled].getFigure().getOwner() != player){
-                    //     GameField endfield = this.gameBoard.getGameFields()[player.getStartField().getIndex() + rolled];
-                    //     return new NextMoves(new Move(player,player.getStartField(),endfield,rolled));
-                    // }
+        NextMoves nextMoves = new NextMoves(players[(playerId+1)%4],rolled);
+
+        
+        for (int figureInd = 0; figureInd < 4; figureInd++) {
+            Figure figure = player.getFigures()[figureInd];
+
+            // PREVENT index out of bound
+            if(
+                figure.getPosition().getIndex()+rolled <72
+            ) {
+                // PREVENT Move hitting own Figure
+                // if(
+                //     gameBoard.getGameFields()[figure.getPosition().getIndex() + rolled].getFigure() != null &&
+                //     gameBoard.getGameFields()[figure.getPosition().getIndex() + rolled].getFigure().getOwner() == player
+                //     // (gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled > 55 ? (figure.getPosition().getIndex()+rolled)%55 + 15:figure.getPosition().getIndex()+rolled].getFigure() == null &&
+                //     // gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled > 55 ? (figure.getPosition().getIndex()+rolled)%55 + 15:figure.getPosition().getIndex()+rolled].getFigure().getOwner() != player)
+                // ) continue;
+
+                // FORCE move when having people in the house
+                if(
+                    rolled == 6 &&
+                    figure.getPosition().getIndex()< 16 &&
+                    (player.getStartField().getFigure() == null ||
+                    player.getStartField().getFigure().getOwner() != player)
+                ) {
+                    nextMoves = new NextMoves(new Move(player,figure.getPosition(),player.getStartField(),rolled));
+                    break;
                 }
-            }
-        }
-        for (int i = 0; i<4; i++){
-            if (player.getFigures()[i].getPosition().getIndex() + rolled > 55) {
-                System.out.println("HHHH");
-            }
-            if (movePossible(player.getFigures()[i], rolled)){
-                if (extendsStartField(player.getFigures()[i], rolled)) {
-                    for (int j = 0; j < 4;j++) {
-                        if (calcMoveToEndField(player.getFigures()[i], rolled) != null && player.getEndzone()[j].getIndex() == calcMoveToEndField(player.getFigures()[i],rolled).getFieldFrom().getIndex()){
-                            System.out.println("HALLO");
+                if (figure.getPosition().getIndex() >= 16) {
+                    // CHECK if Figure is in endzone already
+                    if (figure.getPosition().getType() == "end") {
+                        if (figure.getPosition().getIndex()+rolled > player.getEndzone()[0].getIndex() && figure.getPosition().getIndex()+rolled <= player.getEndzone()[3].getIndex()){
+                            nextMoves.addMove(new Move(player,figure.getPosition(),gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled],rolled));
+                            System.out.println("been here done that");
                         }
+                        continue;
                     }
-                    nextMoves.addMove(calcMoveToEndField(player.getFigures()[i], rolled));
-                }
-                else{
-                    nextMoves.addMove(new Move(player,player.getFigures()[i].getPosition(),this.gameBoard.getGameFields()[(player.getFigures()[i].getPosition().getIndex()+rolled) > 55 ? (player.getFigures()[i].getPosition().getIndex()+rolled)%40:(player.getFigures()[i].getPosition().getIndex()+rolled)],rolled));
+
+
+                    // CHECK if Figure has gone one round
+                    if(figure.getPosition().getIndex() < player.getStartField().getIndex() && figure.getPosition().getIndex()+rolled >= player.getStartField().getIndex()
+                    ){
+                        if (rolled -(player.getStartField().getIndex()-figure.getPosition().getIndex()) < 4) {
+                            nextMoves.addMove(new Move(player, figure.getPosition(), player.getEndzone()[rolled -(player.getStartField().getIndex()-figure.getPosition().getIndex())], rolled));
+                        }
+                        continue;
+                    }
+                    if(figure.getPosition().getIndex() > player.getStartField().getIndex() && (figure.getPosition().getIndex() +rolled) % 50 < player.getStartField().getIndex()&& player.getStartField().getIndex() == 16) {
+                        if (figure.getPosition().getIndex() + rolled <= 59 ) {
+                            nextMoves.addMove(new Move(player, figure.getPosition(), gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled], rolled));
+                        }
+                        continue;
+                    }
+
+                    // DEFAULT Figures going around in circles
+                    nextMoves.addMove(new Move(
+                        player,
+                        gameBoard.getGameFields()[figure.getPosition().getIndex()],
+                        gameBoard.getGameFields()[figure.getPosition().getIndex()+rolled > 55 ? (figure.getPosition().getIndex()+rolled)%55 + 15:figure.getPosition().getIndex()+rolled], 
+                        rolled
+                    ));
+                } else {
+                    if (
+                        rolled == 6 && (player.getStartField().getFigure() == null 
+                        || player.getStartField().getFigure().getOwner() != player)
+                    ) {
+                        nextMoves = new NextMoves(new Move(player, figure.getPosition(), player.getStartField(), rolled));
+                    }
                 }
             }
-            // else if (   player.getFigures()[i].getPosition().getIndex() >=16 &&
-            //             player.getFigures()[i].getPosition().getIndex() <= 55){
         }
-        this.onturn = players[(Arrays.asList(players).indexOf(this.onturn)+1)%this.players.length];
+
+        for(int i = nextMoves.getMoves().size()-1; i >=0;i--){
+            if(
+                nextMoves.getMoves().get(i).getFieldTo().getFigure() != null &&
+                nextMoves.getMoves().get(i).getFieldTo().getFigure().getOwner() == player
+            ) nextMoves.getMoves().remove(i);
+        }
+        if(rolled != 6 && (trynum >=2 || !NeedsSix(player))) {
+            this.onturn = players[(player.getTeamindex()+1) %this.players.length];
+            trynum = 0;
+        } else trynum++;
+        if (player.getType() != "human" && nextMoves.getMoves().size() > 0){
+            if(GameAPI.makeMove(nextMoves.getMoves().get(0))) {
+                JFrame endscreen = new JFrame();
+                endscreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                endscreen.setVisible(true);
+                endscreen.setTitle("YOU WON");
+                endscreen.setResizable(true);
+                endscreen.setSize(1000,825);
+                JPanel endpanel = new JPanel();
+                endpanel.setLayout(null);
+                JLabel endText = new JLabel();
+                endText.setText("YOU WON THE GAME!!!");
+                endpanel.setBackground(Constants.TEAMCOLORS[(nextMoves.getMoves().get(0).getPlayer().getTeamindex() + 1 )% 4]);
+                endpanel.add(endText);
+                endscreen.add(endpanel);
+            };
+            return new NextMoves(getOnturn(),rolled);
+        }
         return nextMoves;
     }
-
 }

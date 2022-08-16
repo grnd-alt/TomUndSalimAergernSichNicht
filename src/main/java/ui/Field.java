@@ -7,11 +7,12 @@ import javax.swing.border.Border;
 import constants.Constants;
 
 public class Field extends JFrame {
+    private JPanel field;
 
     public JPanel initField(JPanel panel, Color color, int times,int x,int y){
         int d = 720;
 
-        JPanel field = new JPanel();
+        field = new JPanel();
         field.setPreferredSize(new Dimension(d/11*times,d/11));
         field.setBackground(Constants.BACKGROUND);
         field.setBounds(x,y,d/11*times,d/11);
@@ -19,6 +20,10 @@ public class Field extends JFrame {
         panel.setBackground(Constants.BACKGROUND);
         panel.add(field);
         return field;
+    }
+
+    public void SetHighlight(){
+        field.setBackground(Color.cyan);
     }
 
     private static class RoundedBorder implements Border {

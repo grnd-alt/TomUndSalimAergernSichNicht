@@ -15,7 +15,6 @@ public class DiceUI {
     public DiceUI(int x ,int y,JPanel parent) {
         for (int i = 0; i < 6; i++){
             String filename = "src/main/resources/diceSides/"+(i+1)+".png";
-            System.out.println(filename);
             File file = new File(filename);
             try {
                 BufferedImage bimage = ImageIO.read(file);
@@ -37,6 +36,7 @@ public class DiceUI {
         this.piclab[number-1].setBounds(x,y,65,65);
     }
     public void setVisible(int number){
+        System.out.println(number);
         for (int i = 0; i < 6;i++) {
             this.piclab[i].setVisible(false);
         }

@@ -4,6 +4,15 @@ import java.awt.Color;;
 
 public class Player {
     private GameField[] endzone = new GameField[4];
+    private String type;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public GameField[] getEndzone() {
         return endzone;
     }
@@ -71,6 +80,7 @@ public class Player {
     }
 
     public Player(int teamindex,Color teamcolor) {
+        this.type = "human";
         this.teamcolor = teamcolor;
         this.figures = new Figure[4];
         this.teamindex = teamindex;
