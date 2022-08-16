@@ -27,6 +27,7 @@ public class GameBoard {
             else if (i > 71-16) {
                 this.gameFields[i] = new GameField("end",Constants.TEAMCOLORS[(int)(71-i)/4],i);
                 this.gameFields[i].setFigure(players[(int)(71-i)/4].getFigures()[(int)(71-i)/4]);
+                players[(int)(i-56)/4].addToEndZone(gameFields[i]);
             }
             else if ((i -16) % 10 == 0) {
                 this.gameFields[i] = new GameField("normal", Constants.TEAMCOLORS[(int)(i-16)/10],i);

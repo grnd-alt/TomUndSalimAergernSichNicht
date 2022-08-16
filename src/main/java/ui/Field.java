@@ -3,22 +3,27 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.Border;
-import java.awt.Graphics2D;
+
+import constants.Constants;
 
 public class Field extends JFrame {
+    private JPanel field;
 
-    private Color backgroundColor = new Color(253 , 241,141);
-
-    public void initField(JPanel panel, Color color, int times,int x,int y){
+    public JPanel initField(JPanel panel, Color color, int times,int x,int y){
         int d = 720;
 
-        JPanel field = new JPanel();
-        //field.setBackground(color);
+        field = new JPanel();
         field.setPreferredSize(new Dimension(d/11*times,d/11));
+        field.setBackground(Constants.BACKGROUND);
         field.setBounds(x,y,d/11*times,d/11);
         field.setBorder(new RoundedBorder(d/11, color));
-        panel.setBackground(backgroundColor);
+        panel.setBackground(Constants.BACKGROUND);
         panel.add(field);
+        return field;
+    }
+
+    public void SetHighlight(){
+        field.setBackground(Color.cyan);
     }
 
     private static class RoundedBorder implements Border {
@@ -30,17 +35,17 @@ public class Field extends JFrame {
             this.radius = radius;
             this.color = color;
         }
-        @Override
+        // @Override
         public Insets getBorderInsets(Component c) {
             return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
         }
 
-        @Override
+        // @Override
         public boolean isBorderOpaque() {
-            return true;
+            return false;
         }
 
-        @Override
+        // @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2 = (Graphics2D)g;
             g2.setColor(color);

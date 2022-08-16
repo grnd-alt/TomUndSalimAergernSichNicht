@@ -3,6 +3,29 @@ package classes;
 import java.awt.Color;;
 
 public class Player {
+    private GameField[] endzone = new GameField[4];
+    private String type;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public GameField[] getEndzone() {
+        return endzone;
+    }
+
+    public void addToEndZone(GameField gameField) {
+        for (int i = 0; i< 4;i++) {
+            if (this.endzone[i] == null) {
+                this.endzone[i] = gameField;
+                return;
+            }
+        }
+    }
+
     private Figure[] figures;
     public void setFigures(GameBoard gameBoard) {
         this.figures = new Figure[4];
@@ -33,6 +56,13 @@ public class Player {
         return homeFields;
     }
 
+    public boolean hasWon() {
+        for (int i = 0; i < this.figures.length; i++) {
+            if (this.figures[i].getPosition().getType() != "end") return false;
+        }
+        return true;
+    }
+
     public GameField[] addHomeField(GameField gameField) {
         for (int i = 0; i< 4;i++) {
             if (this.homeFields[i] == null) {
@@ -50,6 +80,7 @@ public class Player {
     }
 
     public Player(int teamindex,Color teamcolor) {
+        this.type = "human";
         this.teamcolor = teamcolor;
         this.figures = new Figure[4];
         this.teamindex = teamindex;
