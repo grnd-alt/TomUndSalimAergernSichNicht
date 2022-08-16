@@ -8,7 +8,7 @@ import constants.Constants;
 
 public class Field extends JFrame {
 
-    public void initField(JPanel panel, Color color, int times,int x,int y){
+    public JPanel initField(JPanel panel, Color color, int times,int x,int y){
         int d = 720;
 
         JPanel field = new JPanel();
@@ -18,6 +18,7 @@ public class Field extends JFrame {
         field.setBorder(new RoundedBorder(d/11, color));
         panel.setBackground(Constants.BACKGROUND);
         panel.add(field);
+        return field;
     }
 
     private static class RoundedBorder implements Border {
